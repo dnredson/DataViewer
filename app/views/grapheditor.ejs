@@ -63,7 +63,11 @@
 
 
           let entities = await getEntities(nodes);
-          console.log (entities);
+          
+          
+          entities.forEach(element => {
+            console.log (element);
+          });
 
           // Promise.all([getEntities(nodes)])
           //   .then(function (result1) {
