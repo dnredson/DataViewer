@@ -134,8 +134,9 @@
             }
           }
         }
-        var url = 'http://177.104.61.60:1026/v2/entities/' + id;
+        var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.60:1026/v2/entities/' + id;
         xhr.open('get', url, true);
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.setRequestHeader("fiware-service", "openiot");
         xhr.setRequestHeader("fiware-servicepath", "/");
         xhr.send();
