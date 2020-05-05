@@ -53,7 +53,7 @@
           //console.log("Error: "+this.responseText);
         }
       }
-      req2.onload = function () {
+      req2.onload = async function () {
         if (req2.status != 200) { // analyze HTTP status of the response
           alert(`Error ${req2.status}: ${req2.statusText}`); // e.g. 404: Not Found
         } else { // show the result
@@ -62,7 +62,7 @@
           var edges = myArr.attributes.value[0].edges;
 
 
-          let entities = getEntities(nodes);
+          let entities = await getEntities(nodes);
           console.log (entities);
 
           // Promise.all([getEntities(nodes)])
@@ -102,11 +102,9 @@
         method: "GET",
 
         headers: {
-          "Access-Control-Allow-Headers": "*, Access-Control-Allow-Origin, fiware-servicepath, X-Requested-With, fiware-service",
           "fiware-service": "openiot",
           "fiware-servicepath": "/",
-          "Access-Control-Allow-Origin" : "*",
-          "X-Requested-With": "xmlhttprequest",
+     
         }
       };
       try {
@@ -137,6 +135,7 @@
         }
         var url = 'http://177.104.61.60:1026/v2/entities/' + id;
         xhr.open('get', url, true);
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.setRequestHeader("fiware-service", "openiot");
         xhr.setRequestHeader("fiware-servicepath", "/");
         xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -318,20 +317,14 @@
     <script type="text/javascript">
       function drawGraph(graph, status) {
         //console.log(graph.attributes.value[0].nodes);
-        //console.log(status);
-
-        for (i = 0; i < graph.attributes.value[0].nodes.length; i++) {
-          graph.attributes.value[0].nodes[i].shape = "box";
+        
+console.log("Resultado dentro do Draw");
+console.log(status.length);
+        for (i = 0; i < status.length; i++) {
+        console.log(status[i]);
         }
 
 
-        console.log("Satus");
-        entities = status[0];
-        for (i = 0; i < entities.length; i++) {
-          console.log(entities[i].id);
-        }
-        console.log(entities[1].id);
-        console.log(entities[2].id);
         //window.open('data:text/csv;charset=utf-8,' + escape(status));
 
 
