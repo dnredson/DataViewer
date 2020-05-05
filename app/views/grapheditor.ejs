@@ -80,34 +80,17 @@
 
     }
 
-    // const getEntities = async (myArr) => {
-    //   var entities = new Array();
-    //   var elements = myArr.length;
-    //   for (i = 0; i < myArr.length; i++) {
-    //     var temp = await API(myArr[i].id);
-    //     entities.push(temp);
-    //     console.log(i);
-    //     console.log(myArr.length);
-    //     if (i = elements - 1) {
-    //       return await entities;
-    //     }
-    //   }
-    // };
 
     const getEntities = async (myArr) => {
-      var entities = [];
-      
+      console.log ( myArr );
+      var entities = new Array();
+      var elements = myArr.length;
       for (i = 0; i < myArr.length; i++) {
-
-        entities.push ( API(myArr[i].id) );
+        var temp = await API(myArr[i].id);
+        entities.push(temp);
       }
-
-      const promiseRace = await Promise.race( entities );
-
-      console.log ( 'getEntities' , promiseRace);
-
-      return promiseRace;
-
+      console.log ('barrier entities' , entities);
+      return entities;
     };
 
     const API = async (id) => {
@@ -116,18 +99,17 @@
         method: "GET",
 
         headers: {
-          "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization,fiware-service,fiware-servicepath",
+          "Access-Control-Allow-Headers": "*, Access-Control-Allow-Origin, fiware-servicepath, X-Requested-With, fiware-service",
           "fiware-service": "openiot",
           "fiware-servicepath": "/",
+          "Access-Control-Allow-Origin" : "*",
           "X-Requested-With": "xmlhttprequest",
-
         }
-
       };
       try {
         const response = await fetch(url, opcoes);
-        const json = await response.json();
-        return await json;
+        const json = response.json();
+        return json;
       } catch (error) {
         return error;
         console.log(error);
