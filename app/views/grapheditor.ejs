@@ -62,17 +62,20 @@
           var edges = myArr.attributes.value[0].edges;
 
 
-          Promise.all([getEntities(nodes)])
-            .then(function (result1) {
-              console.log("Resultado:");
-              console.log(result1);
-              //drawGraph(myArr);
+          let entities = getEntities(nodes);
+          console.log (entities);
+
+          // Promise.all([getEntities(nodes)])
+          //   .then(function (result1) {
+          //     console.log("Resultado:");
+          //     console.log(result1);
+          //     //drawGraph(myArr);
 
 
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          //   })
+          //   .catch((err) => {
+          //     console.log(err);
+          //   });
 
         }
       };
@@ -94,7 +97,7 @@
     };
 
     const API = async (id) => {
-      var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.60:1026/v2/entities/' + id;
+      var url = 'http://177.104.61.60:1026/v2/entities/' + id;
       var opcoes = {
         method: "GET",
 
