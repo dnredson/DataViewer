@@ -80,18 +80,34 @@
 
     }
 
+    // const getEntities = async (myArr) => {
+    //   var entities = new Array();
+    //   var elements = myArr.length;
+    //   for (i = 0; i < myArr.length; i++) {
+    //     var temp = await API(myArr[i].id);
+    //     entities.push(temp);
+    //     console.log(i);
+    //     console.log(myArr.length);
+    //     if (i = elements - 1) {
+    //       return await entities;
+    //     }
+    //   }
+    // };
+
     const getEntities = async (myArr) => {
-      var entities = new Array();
-      var elements = myArr.length;
+      var entities = [];
+      
       for (i = 0; i < myArr.length; i++) {
-        var temp = await API(myArr[i].id);
-        entities.push(temp);
-        console.log(i);
-        console.log(myArr.length);
-        if (i = elements - 1) {
-          return await entities;
-        }
+
+        entities.push ( API(myArr[i].id) );
       }
+
+      const promiseRace = await Promise.race( entities );
+
+      console.log ( 'getEntities' , promiseRace);
+
+      return promiseRace;
+
     };
 
     const API = async (id) => {
@@ -139,6 +155,7 @@
         xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.setRequestHeader("fiware-service", "openiot");
         xhr.setRequestHeader("fiware-servicepath", "/");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.send();
       });
     }
