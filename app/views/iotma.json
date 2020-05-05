@@ -1,0 +1,232 @@
+  "id": "urn:ngsi-ld:TestNodeIOTMA",
+    "type": "IoTMA",
+    "action": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "text",
+            "value": "reboot"
+        },
+        "metadata": {}
+    },
+    "actionintervall": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "number",
+            "value": 30
+        },
+        "metadata": {}
+    },
+    "cpu": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "number",
+            "value": 2
+        },
+        "metadata": {}
+    },
+    "entities": {
+        "type": "StructuredValue",
+        "value": [
+            {
+                "host": {
+                    "type": "text",
+                    "value": "http://imaiot.org:1026"
+                },
+                "service": {
+                    "type": "text",
+                    "value": "openiot"
+                },
+                "servicepath": {
+                    "type": "text",
+                    "value": "/"
+                },
+                "entityid": {
+                    "type": "text",
+                    "value": "urn:ngsi-ld:Filho01"
+                },
+                "entitypath": {
+                    "type": "text",
+                    "value": ""
+                },
+                "processtype": {
+                    "type": "text",
+                    "value": "docker"
+                },
+                "processname": {
+                    "type": "text",
+                    "value": "testedocker"
+                },
+                "port": {
+                    "type": "number",
+                    "value": 22222
+                },
+                "avaiability": {
+                    "type": "text",
+                    "value": "testedocker"
+                },
+                "startscript": {
+                    "type": "text",
+                    "value": ""
+                },
+                "stopscript": {
+                    "type": "text",
+                    "value": ""
+                },
+                "action": {
+                    "type": "text",
+                    "value": "OK"
+                },
+                "lastlog": {
+                    "type": "text",
+                    "value": ""
+                }
+            },
+            {
+                "host": {
+                    "type": "text",
+                    "value": "http://imaiot.org:1026"
+                },
+                "service": {
+                    "type": "text",
+                    "value": "openiot"
+                },
+                "servicepath": {
+                    "type": "text",
+                    "value": "/"
+                },
+                "entityid": {
+                    "type": "text",
+                    "value": "urn:ngsi-ld:Filho02"
+                },
+                "entitypath": {
+                    "type": "text",
+                    "value": ""
+                },
+                "processtype": {
+                    "type": "text",
+                    "value": "system"
+                },
+                "processname": {
+                    "type": "text",
+                    "value": "wsplug"
+                },
+                "port": {
+                    "type": "number",
+                    "value": 22222
+                },
+                "avaiability": {
+                    "type": "text",
+                    "value": "testedocker"
+                },
+                "startscript": {
+                    "type": "text",
+                    "value": "./wsplug"
+                },
+                "stopscript": {
+                    "type": "text",
+                    "value": "killall wsplug"
+                },
+                "action": {
+                    "type": "text",
+                    "value": "restart"
+                },
+                "lastlog": {
+                    "type": "text",
+                    "value": ""
+                }
+            }
+        ],
+        "metadata": {}
+    },
+    "entitypath": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "text",
+            "value": ""
+        },
+        "metadata": {}
+    },
+    "heartbeatinterval": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "number",
+            "value": 30
+        },
+        "metadata": {}
+    },
+    "heartbeatretry": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "number",
+            "value": 3
+        },
+        "metadata": {}
+    },
+    "host": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "text",
+            "value": "http://imaiot.org:1026"
+        },
+        "metadata": {}
+    },
+    "memoryavailable": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "number",
+            "value": 1838166016
+        },
+        "metadata": {}
+    },
+    "memorysize": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "number",
+            "value": 2086522880
+        },
+        "metadata": {}
+    },
+    "publishintervall": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "number",
+            "value": 30
+        },
+        "metadata": {}
+    },
+    "samplinginterval": {
+        "type": "Number",
+        "value": 5,
+        "metadata": {}
+    },
+    "service": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "text",
+            "value": "openiot"
+        },
+        "metadata": {}
+    },
+    "servicepath": {
+        "type": "StructuredValue",
+        "value": {
+            "type": "text",
+            "value": "/"
+        },
+        "metadata": {}
+    },
+    "setupinterval": {
+        "type": "Number",
+        "value": 60,
+        "metadata": {}
+    },
+    "setuptimestamp": {
+        "type": "Number",
+        "value": 0,
+        "metadata": {}
+    },
+    "timestamp": {
+        "type": "Number",
+        "value": 1580512925,
+        "metadata": {}
+    }
