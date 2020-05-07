@@ -20,3 +20,6 @@ module.exports.blank = function (application, req, res) {
 module.exports.grapheditor = function (application, req, res) {
   res.render("grapheditor");
 };
+module.exports.sad = function (application, req, res) {
+  res.render("sad");
+};

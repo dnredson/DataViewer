@@ -1,0 +1,737 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>SAD</title>
+    </head>
+    <style>
+        body {
+            text-align: center;
+            margin: 0px;
+            background: #eeeeee;
+        }
+        #box1 {
+            background: #29414b;
+            min-height: 100px;
+            width: 100%;
+        }
+
+        #box1-2 {
+            background: #29414b;
+            min-height: 60px;
+            width: 100%;
+
+        }
+
+        #box2 {
+            margin-top:-60px;
+            min-height: 30px;
+            width: 100%;
+
+        }
+        .content1 {
+            box-sizing: border-box;
+            padding: 10px;
+            display: inline-block;
+            width: 100%;
+            text-align: left;
+        }
+        #logo {
+            color: #FFF;
+            font-family: Arial, Helvetica, sans-serif;
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 25px;
+            font-weight: 100;
+            max-width: 150px;
+            display: inline-block;
+        }
+        #divHost {
+            padding-top: 15px;
+            width: auto;
+            display: inline-block;
+            float: right;
+            margin-right:15px;
+            color: #FFF;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+        #host {
+            border: 1px solid #3f545d;
+            color: #FFF;
+            background: #3f545d;
+            padding: 10px;
+            width: 200px;
+            font-size: 12px;
+        }
+        #botConnect {
+            vertical-align:top;
+            display:inline-block;
+            text-align:center;
+            border:1px Solid #FFF;
+            height: 38px;
+            width: 38px;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            box-shadow: 1px 1px 1px #084673;
+            -webkit-box-shadow: 1px 1px 1px #084673;
+            -moz-box-shadow: 1px 1px 1px #084673;
+
+        }
+        #botConnect:hover{
+            cursor:pointer;
+            background:#445961	
+        }
+
+        #botReflesh {
+            vertical-align:top;
+            display:inline-block;
+            text-align:center;
+            border:1px Solid #FFF;
+            height: 38px;
+            width: 38px;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            box-shadow: 1px 1px 1px #084673;
+            -webkit-box-shadow: 1px 1px 1px #084673;
+            -moz-box-shadow: 1px 1px 1px #084673;
+
+        }
+        #botReflesh:hover{
+            cursor:pointer;
+            background:#445961	
+        }
+
+        #connectOff {
+            cursor:pointer;
+        }
+        #connectOn {
+            cursor:pointer;
+        }
+
+        #hostError{
+            text-align: center;
+            height:10px;
+
+            padding-right: 34px;
+            font-size: 10px;
+            color:tomato;
+
+        }
+
+        table {
+            margin-top:10px;
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 12px;
+        }
+
+        table th {
+            border: none;
+            font-size: 13px;
+            color: #FFF;
+            background: #00ACEA;
+            box-sizing: border-box;
+        }
+        table td {
+            border: none;
+            font-size: 14px;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: #eeeeee;            
+        }
+
+        table tr:hover {
+            background: #00ACEA;
+            color:#FFF;
+            cursor:pointer;
+        }
+
+        .divwhite {
+
+            line-height:normal;
+            font-size:13px;
+            font-style:normal;
+            font-variant:normal;
+            font-weight:normal;
+            white-space: normal;
+            box-sizing:border-box !important;
+            padding-top: 20px;
+            padding-right: 20px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+            margin-top:10px;
+            margin-right:0px;
+            margin-bottom:20px;
+            margin-left:0px;
+            border-top-color:#d8d8d8;
+            border-right-color:#d8d8d8;
+            border-bottom-color:#d8d8d8;
+            border-left-color:#d8d8d8;
+            border-top-width:1px;
+            border-right-width:1px;
+            border-bottom-width:2px;
+            border-left-width:1px;
+            border-top-style:solid;
+            border-left-style:solid;
+            border-right-style:solid;
+            border-bottom-style:solid;
+            border-top-left-radius:3px;
+            border-top-right-radius:3px;
+            border-bottom-left-radius:3px;
+            border-bottom-right-radius:3px;
+            background-color:#FFF;
+        }
+
+        .title {
+            font-family: Verdana, Geneva, sans-serif;
+            color: #5484AA;
+            font-size: 14px;
+        }
+
+        select{
+            width: 100%;
+            background: #F5F5F5;
+            box-sizing: border-box;
+            color: #333;
+            cursor: pointer;
+            font-family: RobotoLight, Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            font-size-adjust: none;
+            font-stretch: normal;
+            font-style: normal;
+            font-variant: normal;
+            font-weight: normal;
+            height: auto;
+            line-height: 1.4;
+            margin-bottom: 7px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 2px;
+            overflow: hidden;
+            padding-bottom: 6px;
+            padding-left: 8px;
+            padding-right: 8px;
+            padding-top: 6px;
+            white-space: nowrap;
+            word-wrap: break-word;
+            border-bottom-color: #ddd;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-left-color: #ddd;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: #ddd;
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: #ddd;
+            border-top-style: solid;
+            border-top-width: 1px;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            box-shadow: inset 0 0 1px 1px #fff, 0 2px 1px -1px rgba(0, 0, 0, 0.1)!important;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            height: 31px;
+            vertical-align: middle;
+        }
+
+
+        input[type=text]{
+            width: 100%;
+            background: rgb(255, 255, 255);
+            box-sizing: border-box;
+            color: #333;
+            cursor: text;
+            font-family: RobotoLight, Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            font-size-adjust: none;
+            font-stretch: normal;
+            font-style: normal;
+            font-variant: normal;
+            font-weight: normal;
+            height: auto;
+            line-height: 1.4;
+            margin-bottom: 7px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 2px;
+            overflow: hidden;
+            padding-bottom: 6px;
+            padding-left: 8px;
+            padding-right: 8px;
+            padding-top: 6px;
+            /*white-space:nowrap;
+        word-wrap:break-word;*/
+            border-bottom-color: #ddd;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-left-color: #ddd;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: #ddd;
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: #ddd;
+            border-top-style: solid;
+            border-top-width: 1px;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 1px -1px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+
+        }
+
+
+        input[type=submit]{
+            background-attachment: scroll;
+            background-clip: border-box;
+            background-color: #39b3d7;
+            background-origin: padding-box;
+            border-color: #269abc;
+            background-repeat: repeat;
+            border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-left-color: #269abc;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: #269abc;
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: #269abc;
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+            border-top-style: solid;
+            border-top-width: 1px;
+            box-sizing: border-box;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.4285;
+            outline-color: invert;
+            margin-bottom: 0px;
+            outline-style: none;
+            outline-width: medium;
+            padding-bottom: 6px;
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 6px;
+            transition-property: all;
+            white-space: nowrap;
+        }
+
+        label{
+            vertical-align: middle;
+            display: inline-block;
+            color: #484848;
+            font-weight: 100;
+            font-size: 13px;
+            font-family: 'PT Sans', RobotoBlack, RobotoCondensed, Arial, Helvetica, sans-serif;
+        }
+
+        #box1 label{
+            display: inline-block;
+            vertical-align: middle;
+            color: #FFF;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        input[type=submit]:hover{
+            background-attachment: scroll;
+            background-clip: border-box;
+            background-color: #43A3BF;
+            background-origin: padding-box;
+            border-color: #269abc;
+            background-repeat: repeat;
+            border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-left-color: #269abc;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: #269abc;
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: #269abc;
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+            border-top-style: solid;
+            border-top-width: 1px;
+            box-sizing: border-box;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.4285;
+            outline-color: invert;
+            margin-bottom: 0px;
+            outline-style: none;
+            outline-width: medium;
+            padding-bottom: 6px;
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 6px;
+            transition-property: all;
+            white-space: nowrap;
+        }
+
+        .divTable{
+
+            display: flex;
+            min-height: 200px;
+            justify-content: center;
+            align-items: center;
+            align-content: space-between;
+        }
+
+        .divTable div{
+            box-sizing:border-box !important;
+            align-self: flex-start;
+            overflow: auto;
+            width: 50%;
+
+        }
+
+        .marginleft10{
+            margin-left: 10px
+
+        }
+
+        @media screen and (min-width:  0px) and (max-width: 800px) {
+
+            .marginleft10{
+                margin-left:0px
+            }
+            .divTable{
+
+                display: inline-block;
+                min-height: auto;
+                justify-content: center;
+                width: 100%;
+                align-items: center;
+                margin:0px;
+                align-content: space-between;
+            }
+
+            .divTable div{
+                box-sizing:border-box !important;
+                align-self: flex-start;
+                width: 100%;
+
+                overflow: auto;
+
+            }
+
+        }
+
+        @media screen and (min-width:  0px) and (max-width: 500px) {
+            #divHost {float:none; width:100%}
+        }
+
+    </style>
+
+    <script>
+        var devices = [];
+        var Selector = {
+            $: function (id) {
+                return document.getElementById(id);
+            }
+        }
+
+        String.prototype.trim = function () {
+            return this.replace(/^\s+|\s+$/g, '');
+        }
+        Number.prototype.toFixedDown = function(digits) {
+            var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
+                m = this.toString().match(re);
+            return m ? parseFloat(m[1]) : this.valueOf();
+        };
+
+        function toISO(s){
+            var d = new Date(s);
+            return d.toISOString();
+        }
+       
+        function secondsBetween(d1, d2){
+            const date1 = new Date(d1);
+            const date2 = new Date(d2);
+            return Math.ceil(Math.abs(date2 - date1) / 1000);
+        }
+        function hoursBetween(d1, d2){
+            const date1 = new Date(d1);
+            const date2 = new Date(d2);
+            return Math.ceil(Math.abs(date2 - date1) / (1000 * 60 * 60));
+        }
+        function daysBetween(d1, d2){
+            const date1 = new Date(d1);
+            const date2 = new Date(d2);
+            return Math.ceil(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+        }
+
+        function monthsBetween(d1, d2) {
+            const date1 = new Date(d1);
+            const date2 = new Date(d2);
+            var months;
+            months = (date2.getFullYear() - date1.getFullYear()) * 12;
+            months -= date1.getMonth() + 1;
+            months += date2.getMonth();
+            return months <= 0 ? 0 : months;
+        }
+
+
+        function getOrionData(hostAdr) {
+            Selector.$('divEntities').innerHTML = '';
+            var html = '<span class="title" >Entities</span><br /> <br /><table width="100%" border="0" cellspacing="1" cellpadding="5"><tr>';
+            html += '<th scope="col">Entity</th><th scope="col">Type</th><th scope="col">First Data</th><th scope="col">Last Data</th><th scope="col">Monthly</th><th scope="col">Daily</th><th scope="col">Hourly</th><th scope="col">All Samples</th><th scope="col">Sampling</th></tr>';
+            if (Selector.$('Orion').value!='') {
+                if (json = JSON.parse(QueryCrate("show tables from mtopeniot"))) { 
+                    if (json.rows.length>0) {
+                        //tables array
+                        var tables = json.rows;
+                        var fromDate = "2020-02-01";
+                        var toDate = "2020-02-29";
+                        var filter = "true";
+                        if (Selector.$('Etype').value != 'all') {
+                            filter = " entity_type = '" + Selector.$('Etype').value + "' ";
+                        }
+                        var tb = "select tb, entity_id, entity_type, firstData, lastData, qtd from (";
+                        for(var i = 0; i < tables.length; i++) {
+                            if (i>0) tb += " union all ";
+                            tb += "select  '" + tables[i][0] + "' as tb, entity_id, entity_type, min(time_index) as firstData, max(time_index) as lastData, count(time_index) as qtd from mtopeniot." + 
+                                    tables[i][0] + " where " + filter + " and time_index between '" + fromDate + "' and '" + toDate + "' group by entity_id, entity_type";
+                        } 
+                        tb += ") as t order by entity_type, entity_id";
+                        if (json = JSON.parse(QueryCrate(tb))) {                        
+                            var sql1 = 'select count(*) as qtd from (select extract(year from time_index) as ya, extract(month from time_index) as mt, extract(day from time_index) as dy, extract(hour from time_index) as hr from (';
+                            var sql2 = "select d from (";
+                            for(var j = 0; j< tables.length; j++) {
+                                if (j>0) {
+                                    sql1 += " union all ";
+                                    sql2 += " union all ";
+                                }
+                                sql1 += "select entity_id, time_index from mtopeniot." + tables[j][0] + " where " + filter + " and time_index between '" + fromDate + "' and '" + toDate + "'";
+                                sql2 += "select entity_id, date_trunc('minute', 'UCT', time_index) as d from mtopeniot." + tables[j][0] + " where  " + filter + " and time_index between '" + fromDate + "' and '" + toDate + "' group by entity_id, d ";
+                            }
+                            for(var i = 0; i < json.rows.length; i++) {
+                                cntMonths = monthsBetween(json.rows[i][3], toDate) + 1;;
+                                cntDays = daysBetween(json.rows[i][3], toDate) + 1;
+                                cntHours = hoursBetween(json.rows[i][3], toDate) + 1;
+                                cntALL = secondsBetween(json.rows[i][3], toDate) + 1;
+                                //getting samples from each entity
+                                var sqlf = sql1 + ") as t1 where t1.entity_id = '" + json.rows[i][1] + "' ) as t group by ya, mt, dy, hr";
+                                var js = JSON.parse(QueryCrate(sqlf));
+                                sampHourly = js.rows.length;
+                                Hourly = sampHourly/ cntHours * 100;
+
+                                sqlf = sql1 + ") as t1 where t1.entity_id = '" + json.rows[i][1] + "') as t group by ya, mt, dy";
+                                js = JSON.parse(QueryCrate(sqlf));
+                                sampDaily = js.rows.length;
+                                Daily = sampDaily / cntDays * 100;
+
+                                sqlf = sql1 + ") as t1 where t1.entity_id = '" + json.rows[i][1] + "' ) as t group by ya, mt";
+                                js = JSON.parse(QueryCrate(sqlf));
+                                sampMonthly = js.rows.length;
+                                Monthly = sampMonthly / cntMonths * 100;
+                                
+                                sqlf = sql2 + ") as t where t.entity_id = '" + json.rows[i][1] + "' order by d desc";
+                                js = JSON.parse(QueryCrate(sqlf));
+                                //figure out sampling interval
+                                var samples = [];
+                                for (var j=1; j< js.rows.length; j++){
+                                    samples.push(js.rows[j-1][0] - js.rows[j][0]);
+                                }
+                                sampALL = js.rows.length;
+                                ALL = 0;
+                                sampling = 0;
+                                if (samples.length>1) {
+                                    samples.sort();
+                                    var groups = [];
+                                    var counters =[];
+                                    for (var j=0; j< samples.length; j++){
+                                        var k = 0;
+                                        for (; k<groups.length; k++) {
+                                            if (groups[k][0]==samples[j]) {
+                                                groups[k][1]++;
+                                                break;
+                                            }
+                                        }
+                                        if (k>=groups.length) {
+                                            groups.push([samples[j],1]);
+                                        }
+                                    }
+                                    m = 0;
+                                    for (var j=0; j< groups.length; j++){
+                                        if (groups[j][1]>groups[m][1]) m = j;
+                                    }
+                                    sampling = groups[m][0]/1000;
+                                    cntALL = Math.ceil(cntALL / sampling);
+                                    ALL = sampALL / cntALL * 100;
+                                }
+
+                                html += '<tr><td>' + json.rows[i][1] + '</td><td>' + json.rows[i][2] + '</td><td>' + 
+                                        toISO(json.rows[i][3]) + '</td><td>' + toISO(json.rows[i][4]) + '</td>' +
+                                        '<td>(' + sampMonthly + '/' + cntMonths + ') ' + Monthly.toFixedDown(2) +
+                                        '% </td><td>(' + sampDaily + '/' + cntDays + ') ' + Daily.toFixedDown(2) +
+                                        '% </td><td>(' + sampHourly + '/' + cntHours + ') ' + Hourly.toFixedDown(2) +
+                                        '% </td><td>(' + sampALL + '/' + cntALL + ') ' + ALL.toFixedDown(2) +
+                                        '% </td><td>' + sampling.toFixed(1) + ' seconds </td></tr>';
+
+
+                            }
+                        }
+                    }
+                }
+            }
+            html += '</table>';
+            Selector.$('divEntities').innerHTML = html;
+        }
+
+        function QueryCrate(sql) {
+            var req = new XMLHttpRequest();
+            var url = 'http://' + Selector.$('Orion').value + ':4200/_sql';
+            req.open("POST", url, false);
+            req.setRequestHeader("Content-Type", " application/json");
+            req.send('{"stmt":"' + sql + '"}');
+            if (req.status==200) {
+                return req.responseText;
+            }
+            return '';
+        }
+
+        function getTypes() {
+            Selector.$('Etype').innerHTML = '<option value="all">All</option>';
+            if (Selector.$('Orion').value!='') { 
+                if (json = JSON.parse(QueryCrate("show tables from mtopeniot"))) {
+                    if (json.rows.length>0) {
+                        var tb = "select entity_type, tab from (";
+                        for(var i = 0; i < json.rows.length; i++) {
+                            if (i>0) tb += " union all ";
+                            tb += " select entity_type, '" + json.rows[i][0] + "' as tab from mtopeniot." + json.rows[i][0];
+                        } 
+                        tb += ") as t group by entity_type, tab ";
+                        if (json = JSON.parse(QueryCrate(tb))) {                        
+                            var s = '<option value="all">All</option>';
+                            for(var i = 0; i < json.rows.length; i++) {
+                                s += '<option value="' + json.rows[i][0] + '">' + json.rows[i][0] + '</option>';
+                            }
+                            Selector.$('Etype').innerHTML = s;
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        function connectError(evt) {
+            alert("Connect Error");
+        }
+
+        function refreshScreen(evt) {
+            var js = JSON.parse(this.responseText);
+            clearScreen();
+            Selector.$('devicesPannel').innerHTML = devicesList(js);
+        }
+
+        function clearScreen() {
+            //clear device data
+
+        }
+
+        window.onload = function () {
+            //Mask.setOnlyNumbers(Selector.$('tempo'));
+            Selector.$('dateFrom').value = '2000-01-01';
+            var d = new Date();
+            //Selector.$('dateTo').value = d.getFullYear() + '-' + d.getFullMonth() + '-' + d.getDate();
+            Selector.$('dateTo').value = d.toISOString().substr(0,10);
+        }
+        
+    </script> 
+    <body>
+        <div id="box1">
+            <div class="content1">
+
+
+                <div id="logo"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 2 98 98" style="enable-background:new 0 2 98 98;" xml:space="preserve" width="50" height="50">
+                        <style type="text/css">
+                            .st0{fill:url(#SVGID_1_);}
+                        </style>
+                        <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="49" y1="25.4006" x2="49" y2="76.5994">
+                            <stop offset="0" style="stop-color:#00EFD1"/>
+                            <stop offset="1" style="stop-color:#00ACEA"/>
+                        </linearGradient>
+                        <path class="st0" d="M89,48H76.9c-1.1,0-2.1,0.6-2.6,1.5l-9.5,16.8L51.2,27.4c-0.4-1.2-1.5-2-2.7-2c-1.2,0-2.4,0.7-2.9,1.8  L32.1,58.1L20.7,46.9c-0.6-0.6-1.3-0.9-2.1-0.9H9c-1.7,0-3,1.3-3,3s1.3,3,3,3h8.4L31,65.4c0.7,0.7,1.7,1,2.7,0.8  c1-0.2,1.8-0.8,2.2-1.7l12.2-27.9l13.2,38c0.4,1.1,1.4,1.9,2.6,2c0.1,0,0.2,0,0.3,0c1.1,0,2.1-0.6,2.6-1.5L78.6,54H89  c1.7,0,3-1.3,3-3C92,49.3,90.7,48,89,48z"/>
+                    </svg><br />
+                    SAD<br />
+                    <span style="font-size:9px">Swamp Availability DashBoard</span> </div>
+
+                    <br><div id="hostError"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="box1-2"></div>
+
+        <div id="box2">
+            <div class="content1">
+                <div class="divTable">
+                    <div class="divwhite">
+                        <span class="title">Context</span> 
+                        <div id="devicesPannel" style="width: 100%"> 
+
+                            <select id="Orion" onchange="getTypes()">
+                              <option></option>
+                              <option value="177.104.61.17">Guaspari</option>
+                              <option value="177.104.61.52">Matopiba</option>
+                              <option value="177.104.61.60">IoT Manager</option>
+                              <option value="177.104.61.62">Cartagena</option>                            
+                           </select>
+
+                           <label for="Etype">Entity Type:</label>
+                           <select id="Etype"><option value="all">All</option></select>
+                        </div>
+
+                    </div>
+
+                    <div class="divwhite" style="width:100%;   overflow:auto; max-height: 500px">
+                        <span class="title">Query Period</span> 
+                        <br /> <br />
+                        Period from: <input type="date" id="dateFrom" name="dateFrom"><br /><br />
+                        Period to: <input type="date" id="dateTo" name="dateTo">
+
+                        <div id="botReflesh"  onclick="getOrionData()">
+                            <svg id="imgReflesh" style="margin-top:4px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                width="30px" height="30px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+                                <g>
+                                    <g>
+                                        <path fill="#0000FF" d="M24.309,15.108c-0.354,0-0.639,0.286-0.639,0.64c0,4.229-3.441,7.67-7.67,7.67
+                                            c-4.229,0-7.67-3.441-7.67-7.67c0-4.229,3.44-7.67,7.67-7.67v1.917c0,0.236,0.13,0.452,0.337,0.564
+                                            c0.094,0.05,0.199,0.076,0.302,0.076c0.123,0,0.248-0.037,0.354-0.107l3.836-2.557c0.178-0.119,0.285-0.317,0.285-0.531
+                                            c0-0.214-0.107-0.413-0.285-0.532l-3.836-2.557c-0.197-0.131-0.449-0.144-0.655-0.032C16.129,4.431,16,4.647,16,4.883V6.8
+                                            c-4.935,0-8.948,4.014-8.948,8.948c0,4.936,4.014,8.947,8.948,8.947c4.934,0,8.948-4.012,8.948-8.947
+                                            C24.947,15.395,24.66,15.108,24.309,15.108z M17.277,6.077l2.045,1.363l-2.045,1.362V6.077z"/>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+
+                    </div>
+                        
+                </div>
+
+                <div id="divEntities" class="divwhite" style="width:100%; overflow:auto; max-height: 500px"></div>
+
+            </div>
+
+        </div>
+    </body>
+</html>

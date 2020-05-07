@@ -11,4 +11,7 @@ module.exports = function (application) {
   application.get("/grapheditor", function (req, res) {
     application.app.controllers.dashboard.grapheditor(application, req, res);
   });
+  application.get("/sad", function (req, res) {
+    application.app.controllers.dashboard.sad(application, req, res);
+  });
 };
