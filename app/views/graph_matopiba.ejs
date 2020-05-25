@@ -58,7 +58,7 @@
         var req2 = new XMLHttpRequest();
 
         var url =
-          "http://177.104.61.60:1026/v2/entities/urn:ngsi-ld:IoTManagerEdgeGraph";
+          "http://dashboard.swamp-project.org:1026/v2/entities/urn:ngsi-ld:Matopiba:Graph";
 
         req2.open("GET", url, true);
 
@@ -81,6 +81,7 @@
           } else {
             // show the result
             var myArr = JSON.parse(req2.response);
+
             var nodes = myArr.attributes.value[0].nodes;
             var edges = myArr.attributes.value[0].edges;
 
@@ -114,7 +115,7 @@
       };
 
       const API = async (id) => {
-        var url = "http://177.104.61.60:1026/v2/entities/" + id;
+        var url = "http://dashboard.swamp-project.org:1026/v2/entities/" + id;
         var opcoes = {
           method: "GET",
 
@@ -145,7 +146,7 @@
               }
             }
           };
-          var url = "http://177.104.61.60:1026/v2/entities/" + id;
+          var url = "http://dashboard.swamp-project.org:1026/v2/entities/" + id;
           xhr.open("get", url, true);
           xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
           xhr.setRequestHeader("fiware-service", "openiot");
@@ -586,7 +587,7 @@
 
       const timeSeries = async (id) => {
         var url =
-          "https://cors-anywhere.herokuapp.com/http://177.104.61.60:8668/v2/entities/" +
+          "https://cors-anywhere.herokuapp.com/http://dashboard.swamp-project.org:8668/v2/entities/" +
           id +
           "?lastN=9";
 
@@ -594,6 +595,7 @@
           method: "GET",
 
           headers: {
+            "Access-Control-Allow-Origin": "*",
             "fiware-service": "openiot",
             "fiware-servicepath": "/",
           },
