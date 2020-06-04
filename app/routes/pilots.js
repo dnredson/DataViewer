@@ -89,4 +89,13 @@ module.exports = function (application) {
       pilot
     );
   });
+  application.get("/table", function (req, res) {
+    pilot = "cartagena";
+    application.app.controllers.OrionConnect.table(
+      application,
+      req,
+      res,
+      pilot
+    );
+  });
 };

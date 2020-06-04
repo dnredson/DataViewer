@@ -52,13 +52,14 @@
       window.onload = function () {
         //Mask.setOnlyNumbers(Selector.$('tempo'));
         getNode();
+        showLoading();
       };
 
       function getNode() {
         var req2 = new XMLHttpRequest();
 
         var url =
-          "http://dashboard.swamp-project.org:1026/v2/entities/urn:ngsi-ld:Matopiba:Graph";
+          "http://177.104.61.60:1026/v2/entities/urn:ngsi-ld:IoTManagerEdgeGraph";
 
         req2.open("GET", url, true);
 
@@ -85,18 +86,8 @@
             var edges = myArr.attributes.value[0].edges;
 
             let entities = await getEntities(nodes);
-
-            drawGraph(myArr, entities);
-            // Promise.all([getEntities(nodes)])
-            //   .then(function (result1) {
-            //     console.log("Resultado:");
-            //     console.log(result1);
-            //     //drawGraph(myArr);
-
-            //   })
-            //   .catch((err) => {
-            //     console.log(err);
-            //   });
+            let timeseries = await getTimeSeries(nodes);
+            drawGraph(entities, timeseries);
           }
         };
         req2.send();
@@ -112,9 +103,19 @@
 
         return entities;
       };
+      const getTimeSeries = async (myArr) => {
+        var entities = new Array();
+        var elements = myArr.length;
+        for (i = 0; i < myArr.length; i++) {
+          var temp = await timeSeries(myArr[i].id);
+          entities.push(temp);
+        }
+
+        return entities;
+      };
 
       const API = async (id) => {
-        var url = "http://dashboard.swamp-project.org:1026/v2/entities/" + id;
+        var url = "http://177.104.61.60:1026/v2/entities/" + id;
         var opcoes = {
           method: "GET",
 
@@ -145,7 +146,7 @@
               }
             }
           };
-          var url = "http://dashboard.swamp-project.org:1026/v2/entities/" + id;
+          var url = "http://177.104.61.60:1026/v2/entities/" + id;
           xhr.open("get", url, true);
           xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
           xhr.setRequestHeader("fiware-service", "openiot");
@@ -155,6 +156,33 @@
         });
       }
     </script>
+    <style>
+      .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .loader-wrapper {
+        width: 100%;
+        position: absolute;
+        height: 100%;
+        z-index: 12;
+        background-color: black;
+        opacity: 30%;
+      }
+    </style>
   </head>
 
   <body id="page-top">
@@ -292,8 +320,10 @@
                   </div>
 
                   <div class="card-body">
-                    <h3>Matopiba</h3>
-
+                    <h3>Installed Probes</h3>
+                    <div id="loader-wrapper" class="loader-wrapper">
+                      <div id="loader" class="loader"></div>
+                    </div>
                     <div class="row">
                       <div id="left" class="col-sm-5">
                         <div id="graph"></div>
@@ -408,52 +438,55 @@
     <script src="js/sb-admin-2.min.js"></script>
 
     <script type="text/javascript">
-      function drawGraph(graph, status) {
-        //console.log(graph.attributes.value[0].nodes);
+      function drawGraph(status, time) {
+        drawChart(time, "memoryavailable", "Memory Available", "#chartmem");
+        drawChart(time, "cpu", "Cpu Usage", "#chartcpu");
 
-        graph.attributes.value[0].nodes.forEach((element) => {
-          status.forEach((entity) => {
-            if (entity.id == element.id) {
-              if (entity.available.value.value == true) {
-                if (entity.ping_status.value.value == true) {
-                  element.color = "#D0F0C0";
-                } else {
-                  element.color = "#FFFACD";
-                }
-              } else {
-                if (entity.ping_status.value.value == true) {
-                  element.color = "#FFA500";
-                } else {
-                  element.color = "#FF7F7F";
-                }
-              }
+        var table =
+          '<table id="my-table-id" class="table table-striped table-hover">';
+        table +=
+          "<thead><tr> <td>Entity ID </td><td>Alive</td><td>Status</td><td>Delay</td></tr></thead><tbody>";
+
+        status.forEach((entity) => {
+          table += "<tr>";
+          table +=
+            '<td id="' +
+            entity.id +
+            '" style="cursor: pointer;" onclick="drawDetails(this.id)">';
+          table += entity.id + "</td>";
+
+          table += "<td>" + entity.ping_status.value.value + "</td>";
+          var color;
+          if (entity.available.value.value == true) {
+            if (entity.ping_status.value.value == true) {
+              color = "#D0F0C0";
+            } else {
+              color = "#FFFACD";
             }
-          });
-          element.shape = "box";
+          } else {
+            if (entity.ping_status.value.value == true) {
+              color = "#FFA500";
+            } else {
+              color = "#FF7F7F";
+            }
+          }
+          table +=
+            '<td style="background-color:' +
+            color +
+            '">' +
+            entity.available.value.value +
+            "</td>";
+          table += "<td>" + entity.ping_delay.value.value + "</td>";
+          table += '<td style="text-align: center;"></td>';
+          table += "</tr>";
         });
 
-        var nodes = new vis.DataSet(graph.attributes.value[0].nodes);
-        var edges = new vis.DataSet(graph.attributes.value[0].edges);
-
+        table += "</tbody></table>";
+        table +=
+          '<button type="button" onclick="teste()"class="btn btn-link">Teste</button>';
         // create a network
         var container = document.getElementById("graph");
-        var data = {
-          nodes: nodes,
-          edges: edges,
-        };
-        var options = {
-          height: "400px",
-          interaction: { hover: true },
-        };
-        var network = new vis.Network(container, data, options);
-
-        network.on("click", function (params) {
-          status.forEach((element) => {
-            if (params.nodes == element.id) {
-              drawDetails(params.nodes, element);
-            }
-          });
-        });
+        container.innerHTML = table;
       }
 
       function expandDiv() {
@@ -469,26 +502,24 @@
         }
       }
 
-      function drawDetails(node, status) {
-        document.getElementById("detailsName").innerHTML = node;
-        console.log("timestamp");
+      function drawDetails(node) {
+        console.log("Nde:" + node + "Teste");
 
-        var ts = new Date(parseInt(status.timestamp.value));
-        console.log(status.timestamp.value);
-        document.getElementById("detailsLastMessage").innerHTML = ts;
-        document.getElementById("detailsCPU").innerHTML =
-          status.cpu.value.value;
-        document.getElementById("detailsMemory").innerHTML =
-          status.memoryavailable.value.value +
-          "/" +
-          status.memorysize.value.value;
-        var temp = timeSeries(node);
-
-        Promise.all([timeSeries(node)])
+        Promise.all([timeSeries(node), API(node)])
           .then(function (result1) {
-            console.log("Resultado:");
+            document.getElementById("detailsName").innerHTML = node;
 
-            drawChart(result1);
+            var ts = new Date(parseInt(result1[1].timestamp.value));
+
+            document.getElementById("detailsLastMessage").innerHTML = ts;
+            document.getElementById("detailsCPU").innerHTML =
+              result1[1].cpu.value.value;
+            document.getElementById("detailsMemory").innerHTML =
+              result1[1].memoryavailable.value.value +
+              "/" +
+              result1[1].memorysize.value.value;
+            console.log("result");
+            console.log(result1[0]);
           })
           .catch((err) => {
             console.log(err);
@@ -497,96 +528,93 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-      function drawChart(dataArray) {
-        var x = dataArray[0].attributes[6].values;
-        console.log("Ex x");
-        console.log(x);
-        var series = [];
-        dataArray[0].attributes.forEach((element) => {
-          if (element.attrName == "cpu") {
-            element.values.forEach((valor) => {
-              series.push(valor.value);
-            });
-          }
-        });
-        //MEMORIA
+      function drawChart(dataArray, type, chartLegend, chartdiv) {
         var y = dataArray[0].attributes[6].values;
 
-        var memory = [];
-        dataArray[0].attributes.forEach((element) => {
-          if (element.attrName == "memoryavailable") {
-            element.values.forEach((valor) => {
-              memory.push(valor.value);
-            });
+        var seriesMEM = [];
+        dataArray.forEach((element) => {
+          console.log(element.entityId);
+          var serie = [];
+          serie.name = element.entityId;
+          serie.data = [];
+          var data = [];
+          var point = { y: 0, x: 0 };
+          var memorypoint = [];
+          var timepoint = [];
+          element.attributes.forEach((valor) => {
+            if (valor.attrName == type) {
+              console.log("VALOR");
+              console.log(valor);
+              memorypoint = valor.values;
+            } else if (valor.attrName == "timestamp") {
+              timepoint = valor.values;
+              y = valor.values;
+            } else {
+            }
+          });
+          for (i = 0; i < timepoint.length; i++) {
+            result = 0;
+            if (i != 0) {
+              result = timepoint[i - 1] - timepoint[i];
+            }
           }
+          for (i = 0; i < memorypoint.length; i++) {
+            point.y = 0;
+            point.x = 0;
+            point.y = parseInt(memorypoint[i].value);
+            point.x = parseInt(timepoint[i]);
+
+            serie.data.push(JSON.parse(JSON.stringify(point)));
+          }
+
+          seriesMEM.push(serie);
         });
+        console.log(seriesMEM);
+        //MEMORIA
 
         var optionsMEM = {
           title: {
-            text: "Memory Available",
+            text: chartLegend,
             align: "left",
           },
           dataLabels: {
             enabled: true,
           },
           chart: {
+            id: chartLegend,
             type: "line",
             height: 350,
-          },
-          series: [
-            {
-              name: "memoryAvailable",
-              data: memory,
+            tools: {
+              download: true,
             },
-          ],
+          },
+          series: seriesMEM,
           xaxis: {
             type: "datetime",
             categories: y,
           },
         };
         var chart = new ApexCharts(
-          document.querySelector("#chartmem"),
+          document.querySelector(chartdiv),
           optionsMEM
         );
 
         chart.render();
+        hideLoading();
         //here
-
-        var options = {
-          title: {
-            text: "CPU",
-            align: "left",
-          },
-          dataLabels: {
-            enabled: true,
-          },
-          chart: {
-            type: "line",
-            height: 350,
-          },
-          series: [
-            {
-              name: "sales",
-              data: series,
-            },
-          ],
-          xaxis: {
-            type: "datetime",
-            categories: x,
-          },
-        };
-
-        var chart = new ApexCharts(
-          document.querySelector("#chartcpu"),
-          options
-        );
-
-        chart.render();
       }
-
+      function hideLoading() {
+        var id = document.getElementById("loader-wrapper");
+        id.style.display = "none";
+      }
+      function showLoading() {
+        var id = document.getElementById("loader-wrapper");
+        id.style.display = "block";
+      }
       const timeSeries = async (id) => {
+        console.log(id);
         var url =
-          "https://cors-anywhere.herokuapp.com/http://dashboard.swamp-project.org:8668/v2/entities/" +
+          "https://cors-anywhere.herokuapp.com/http://177.104.61.60:8668/v2/entities/" +
           id +
           "?lastN=140";
         console.log(url);
@@ -602,13 +630,27 @@
           const response = await fetch(url, opcoes);
           const json = response.json();
 
-          console.log(json);
           return json;
         } catch (error) {
-          console.log(error);
           return error;
+          console.log(error);
         }
       };
+
+      function teste() {
+        ApexCharts.exec(
+          "memory",
+          "updateSeries",
+
+          [
+            {
+              data: [32, 44, 31, 41, 22],
+              name: "Testando",
+            },
+          ],
+          true
+        );
+      }
     </script>
   </body>
 </html>

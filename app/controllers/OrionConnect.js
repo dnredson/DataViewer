@@ -62,3 +62,6 @@ module.exports.pilotsApexProbes = function (application, req, res) {
 module.exports.graphMatopiba = function (application, req, res) {
   res.render("graph_matopiba");
 };
+module.exports.table = function (application, req, res) {
+  res.render("table");
+};

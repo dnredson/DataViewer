@@ -292,7 +292,7 @@
                   </div>
 
                   <div class="card-body">
-                    <h3>Installed Probes</h3>
+                    <h3>Matopiba</h3>
 
                     <div class="row">
                       <div id="left" class="col-sm-5">
@@ -486,8 +486,6 @@
 
         Promise.all([timeSeries(node)])
           .then(function (result1) {
-            console.log("Resultado:");
-
             drawChart(result1);
           })
           .catch((err) => {
@@ -498,9 +496,8 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
       function drawChart(dataArray) {
-        console.log(dataArray[0]);
         var x = dataArray[0].attributes[6].values;
-        console.log(x);
+
         var series = [];
         dataArray[0].attributes.forEach((element) => {
           if (element.attrName == "cpu") {
@@ -520,7 +517,7 @@
             });
           }
         });
-
+        var titleChart = "CPU Available " + dataArray[0].entityId;
         var optionsMEM = {
           title: {
             text: "Memory Available",
@@ -554,7 +551,7 @@
 
         var options = {
           title: {
-            text: "CPU",
+            text: titleChart,
             align: "left",
           },
           dataLabels: {
@@ -588,7 +585,7 @@
         var url =
           "https://cors-anywhere.herokuapp.com/http://177.104.61.60:8668/v2/entities/" +
           id +
-          "?lastN=9";
+          "?lastN=140";
 
         var opcoes = {
           method: "GET",
@@ -602,10 +599,11 @@
           const response = await fetch(url, opcoes);
           const json = response.json();
 
+          console.log(json);
           return json;
         } catch (error) {
-          return error;
           console.log(error);
+          return error;
         }
       };
     </script>
