@@ -232,6 +232,5 @@ function getSADfromEntity(hostURL, EntityId, FromDate, ToDate) {
     }
   }
 
-  console.log(jsonOut == "" ? false : JSON.parse(jsonOut));
   return jsonOut == "" ? false : JSON.parse(jsonOut);
 }

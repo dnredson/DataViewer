@@ -98,4 +98,59 @@ module.exports = function (application) {
       pilot
     );
   });
+  application.get("/matopiba-calibrated", function (req, res) {
+    pilot = "matopiba";
+    application.app.controllers.OrionConnect.pilotsCalibratedMatopiba(
+      application,
+      req,
+      res,
+      pilot
+    );
+  });
+  application.get("/guaspari-calibrated", function (req, res) {
+    pilot = "guaspari";
+    application.app.controllers.OrionConnect.pilotsCalibratedGuaspari(
+      application,
+      req,
+      res,
+      pilot
+    );
+  });
+
+  application.get("/matopiba-graph", function (req, res) {
+    pilot = "guaspari";
+    application.app.controllers.OrionConnect.pilotsGraphMatopiba(
+      application,
+      req,
+      res,
+      pilot
+    );
+  });
+  application.get("/guaspari-graph", function (req, res) {
+    pilot = "guaspari";
+    application.app.controllers.OrionConnect.pilotsGraphGuaspari(
+      application,
+      req,
+      res,
+      pilot
+    );
+  });
+  application.get("/matopiba-table", function (req, res) {
+    pilot = "guaspari";
+    application.app.controllers.OrionConnect.pilotsTableMatopiba(
+      application,
+      req,
+      res,
+      pilot
+    );
+  });
+  application.get("/guaspari-table", function (req, res) {
+    pilot = "guaspari";
+    application.app.controllers.OrionConnect.pilotsTableGuaspari(
+      application,
+      req,
+      res,
+      pilot
+    );
+  });
 };

@@ -97,23 +97,23 @@ window.onload = function () {
 var req2 = new XMLHttpRequest();
       
       if(dateRange== null){
-      var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.48:2019/v0/SoilProbe?&lastN=80';
+      var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.48:2019/v0/SoilProbeCalibrated?&lastN=80';
       }else{
-        var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.48:2019/v0/SoilProbe?&'+dateRange;
+        var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.48:2019/v0/SoilProbeCalibrated?&'+dateRange;
       
       }
 
       
       req2.open("GET", url, true);
       
-      req2.setRequestHeader("fiware-service", "openiot");
+      req2.setRequestHeader("fiware-service", "batch");
       req2.setRequestHeader("fiware-servicepath", "/");
       
       req2.onreadystatechange = function(){
           if (this.readyState ==4 && this.status ==200){
               var myArr = JSON.parse(this.responseText);
               
-             
+             console.log(myArr);
              numberOfElements=myArr.length;
              
              for(i=0;i < numberOfElements; i++)  {
@@ -311,8 +311,8 @@ container_block.appendChild( block_to_insert );
                   <div class="card-body">
                     The last 30 samples are showed by default.<br>
                     Select the Date Interval
-                    <input class="form-control" type="text" name="datetimes"  />
-                    
+                    <input class="form-control" type="text" name="datetimes" disabled />
+                    The date Selection is temporally disable
                     <div id="accordion" class="card">
                      </div>
                     
@@ -391,10 +391,11 @@ function drawChart(dataArray) {
   
         
         var x = dataArray.index;
-        
+        console.log("Array");
+        console.log(dataArray);
         var moisture1 = [];
         dataArray.attributes.forEach((element) => {
-          if (element.attrName == "soilMoistureRawDepth1") {
+          if (element.attrName == "soilMoistureCalibratedDepth1") {
             element.values.forEach((valor) => {
               if (valor != null){
               moisture1.push(valor);
@@ -406,7 +407,7 @@ function drawChart(dataArray) {
         });
         var moisture2 = [];
         dataArray.attributes.forEach((element) => {
-          if (element.attrName == "soilMoistureRawDepth2") {
+          if (element.attrName == "soilMoistureCalibratedDepth2") {
             element.values.forEach((valor) => {
               
               moisture2.push(valor);
@@ -415,36 +416,18 @@ function drawChart(dataArray) {
         });
         var moisture3 = [];
         dataArray.attributes.forEach((element) => {
-          if (element.attrName == "soilMoistureRawDepth3") {
+          if (element.attrName == "soilMoistureCalibratedDepth3") {
             element.values.forEach((valor) => {
               
               moisture3.push(valor);
             });
           }
         });
-        var battery = [];
-        dataArray.attributes.forEach((element) => {
-          if (element.attrName == "battery") {
-            element.values.forEach((valor) => {
-            
-              battery.push(valor);
-            });
-          }
-        });
        
-
-        var temperature1 = [];
-        dataArray.attributes.forEach((element) => {
-          if (element.attrName == "soilTemperatureDepth1") {
-            element.values.forEach((valor) => {
-              temperature1.push(valor);
-            });
-          }
-        });
         
         var optionsMoisture = {
           title: {
-            text: "Moisture",
+            text: "Moisture Calibrated",
             align: "left",
           },
           dataLabels: {
@@ -456,13 +439,13 @@ function drawChart(dataArray) {
           },
           series: [
             {
-              name: "soilMoistureRawDepth1",
+              name: "soilMoistureCalibratedDepth1",
               data: moisture1,
             },{
-              name: "soilMoistureRawDepth2",
+              name: "soilMoistureCalibratedDepth1",
               data: moisture2
             },{
-              name: "soilMoistureRawDepth3",
+              name: "soilMoistureCalibratedDepth1",
               data: moisture3
             }
           ],
@@ -472,8 +455,7 @@ function drawChart(dataArray) {
           },
         };
         var divmoisture = dataArray.entityId+"moisture";
-        var divtemperature = dataArray.entityId+"temp";
-        var divbattery = dataArray.entityId+"battery";
+        
         var chart = new ApexCharts(
          
           document.getElementById(divmoisture),
@@ -481,67 +463,7 @@ function drawChart(dataArray) {
         );
         chart.render();
 
-        var optionsBattery = {
-          title: {
-            text: "Battery",
-            align: "left",
-          },
-          dataLabels: {
-            enabled: true,
-          },
-          chart: {
-            type: "line",
-            height: 350,
-          },
-          series: [
-            {
-              name: "Battery",
-              data: battery,
-            }
-          ],
-          xaxis: {
-            type: "datetime",
-            categories: x,
-          },
-        };
-        var chart = new ApexCharts(
-         
-         document.getElementById(divbattery),
-         optionsBattery
-       );
-       chart.render();
-        //here
-
-
-        var optionsTemp = {
-          title: {
-            text: "Temperature",
-            align: "left",
-          },
-          dataLabels: {
-            enabled: true,
-          },
-          chart: {
-            type: "line",
-            height: 350,
-          },
-          series: [
-            {
-              name: "Temperature1",
-              data: temperature1,
-            }
-          ],
-          xaxis: {
-            type: "datetime",
-            categories: x,
-          },
-        };
-        var chart = new ApexCharts(
-          document.getElementById(divtemperature),
-          optionsTemp
-        );
-        chart.render();
-    
+           
       }
 
     </script>

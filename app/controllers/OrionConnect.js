@@ -59,9 +59,25 @@ module.exports.pilotsAboutCartagena = function (application, req, res) {
 module.exports.pilotsApexProbes = function (application, req, res) {
   res.render("apexprobes");
 };
-module.exports.graphMatopiba = function (application, req, res) {
-  res.render("graph_matopiba");
-};
+
 module.exports.table = function (application, req, res) {
   res.render("table");
+};
+module.exports.pilotsCalibratedMatopiba = function (application, req, res) {
+  res.render("calibratedmatopiba");
+};
+module.exports.pilotsCalibratedGuaspari = function (application, req, res) {
+  res.render("calibratedguaspari");
+};
+module.exports.pilotsGraphGuaspari = function (application, req, res) {
+  res.render("graph_guaspari");
+};
+module.exports.pilotsGraphMatopiba = function (application, req, res) {
+  res.render("graph_matopiba");
+};
+module.exports.pilotsTableMatopiba = function (application, req, res) {
+  res.render("matopiba_table");
+};
+module.exports.pilotsTableGuaspari = function (application, req, res) {
+  res.render("guaspari_table");
 };
