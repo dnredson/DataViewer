@@ -60,33 +60,180 @@
                 "startDate": moment().startOf('hour'),
     "endDate": moment().startOf('hour').add(0, 'hour')
         }, function(start, end, label) {
-          console.log("START");
-          console.log(start._d.getTime());
-          console.log("END");
-          console.log(end._d.getTime());
-            dateRange={ init:start._d.getTime()/1000, final: end._d.getTime()/1000 }
+            var dateRange ={};
+            dateRange.init=start.format("YYYY-MM-DD")+"T"+start.format("HH:mm:SS");
+            dateRange.end=end.format("YYYY-MM-DD")+"T"+end.format("HH:mm:SS");
        
-         getOrionData(dateRange);
+            var url = window.location.href;
+            url = url.split('?')[0];
+   
+           url +="?&init="+dateRange.init+"&final="+dateRange.end;
+            console.log(url);
+            window.location.href = url;
         });
         });
     </script>
 
 <style>
-  .loader-wrapper {
-        width: 100%;
-        position: absolute;
-        height: 100%;
-        z-index: 12;
-        background-color: black;
-        opacity: 30%;
-      }
 .card-header {
   border-top: 10px;
 
 }
-
-</style>
+.loader-wrapper {
+        width: 100%;
+        position: absolute;
+        height: 100%;
+        z-index: 12;
+        background-color: #e7e8e8;
+        opacity: 90%;
+        min-height: 500px;
   
+      }
+      .loader{
+        
+    position: relative;
+    left:40%;
+    top: 50px;
+    
+  
+      }
+</style>
+    <script>
+        
+     
+
+
+  
+function getDate(){
+getRAWProbeData(dateRange);
+
+}
+          </script>
+<script>
+   var arr;
+window.onload = function () {
+      //Mask.setOnlyNumbers(Selector.$('tempo'));
+      var url = window.location.href; 
+        //hideChartDiv("clearButtonDiv");
+            console.log("Params")   ;
+            const urlParams = new URLSearchParams(url);
+            var start = urlParams.get('init');
+            var end = urlParams.get('final')
+console.log("Datarange = "+start+ " "+end);
+
+        var addresses = getAddresses();
+        APIAddress = addresses.api;
+        OrionAddress=addresses.orion
+  
+        
+
+           getRAWProbeData(OrionAddress,APIAddress,start,end);
+
+         
+  }
+
+   
+    function getRAWProbeData (OrionAddress, APIAddress, start,end) {
+var req2 = new XMLHttpRequest();
+        
+      var url = 'https://cors-anywhere.herokuapp.com/http://'+OrionAddress+'/v2/entities?type=SoilProbe';
+      
+      req2.open("GET", url, true);
+      req2.setRequestHeader("fiware-service", "openiot");
+      req2.setRequestHeader("fiware-servicepath", "/");
+      req2.onreadystatechange = async function(){
+          if (this.readyState ==4 && this.status ==200){
+              var myArr = JSON.parse(this.responseText);
+
+              
+            
+                 var series = await getTimeSeriesFromAPI(myArr,APIAddress,start,end);
+                  console.log("Start em getRaw");
+              console.log(start);
+              series.forEach((element)=>{
+console.log("Element");
+console.log(element);
+if (element.index.length >0){
+  createChartDiv(element.entityId);
+  drawChart(element);
+  
+}
+              });
+              
+            hideLoading();
+            //drawChart(myArr[i],i);
+           
+      }
+     
+      
+     
+}
+req2.send();
+  }
+const getTimeSeriesFromAPI = async (myArr,APIAddress,start,end) => {
+        var entities = new Array();
+        var elements = myArr.length;
+        for (i = 0; i < myArr.length; i++) {
+          
+          var temp = await timeSeriesAPI(myArr[i].id,APIAddress,start,end);
+          console.log("TEMP");
+          if(temp.error != null){
+            console.log("É nulo");
+          }else{
+            console.log("não é nulo");
+          entities.push(temp);
+          }
+        }
+
+        return entities;
+      };
+
+const timeSeriesAPI = async (id,APIAddress,start,end) => {
+  var url ;
+  console.log("start em getTimeSeries"+start)
+          if(start == null ){
+           url = "https://cors-anywhere.herokuapp.com/http://"+APIAddress+"/v0/SoilProbe/"+id+"?lastN=30";
+             }
+             else{
+              url = "https://cors-anywhere.herokuapp.com/http://"+APIAddress+"/v0/SoilProbe/"+id+"?&fromDate"+start+"&toDate="+end;
+             }
+                console.log(url)    ;
+                      var opcoes = {
+                      method: "GET",
+            
+                      headers: {
+                        "fiware-service": "openiot",
+                        "fiware-servicepath": "/",
+                      },
+                      
+                    };
+                    try {
+                      const response = await fetch(url, opcoes);
+                      const json = response.json();
+                      
+                      return json;
+                    } catch (error) {
+                      return error;
+                      
+                    }
+                  };
+
+function createChartDiv(entityId){
+
+var block_to_insert ;
+var container_block ;
+
+block_to_insert = document.createElement( 'div' );
+block_to_insert.innerHTML = '<div id="'+entityId+'" ><div class="card-header">Probe: '+entityId+'</div><div class="card-body"><div id="'+entityId+'moisture" class="chart-div"></div><br><div id="'+entityId+'temp" class="chart-div"></div><div id="'+entityId+'battery" class="chart-div"></div></div></div></br></br>' ;
+//block_to_insert.innerHTML='<div class="card"><div class="card-header"><a class="card-link" data-toggle="collapse" href="#collapseOne'+entityId+'">Insert</a></div><div id="collapseOne'+entityId+'" class="collapse show"><div class="card-body">Inserted</div></div></div>';
+container_block = document.getElementById( 'accordion' );
+container_block.appendChild( block_to_insert );
+
+}
+
+
+
+      </script>
   </head>
 
   <body id="page-top">
@@ -230,24 +377,19 @@
             <!-- Content Row -->
             <div class="row">
               <div class="col-lg-12">
-                <div id="loader-wrapper" class="loader-wrapper">
-                  <div id="loader" class="loader"></div>
-                </div>
+                <% include ./loader %>
                 <!-- Overflow Hidden -->
                 <div class="card mb-12">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
-                      <h1 class="h3 mb-1 text-gray-800" id="pilotTitle"><%= pilot %> Pilot</h1>
+                        <h1 class="h3 mb-1 text-gray-800" id="pilotTitle"><%= pilot %> Pilot</h1>
                     </h6>
                   </div>
                   
                   <div class="card-body">
-                    
                     The last 30 samples are showed by default.<br>
                     Select the Date Interval
                     <div id="alert" class="alert"></div>
-                    
-
                     <input class="form-control" type="text" name="datetimes"  />
                     
                     <div id="accordion" class="card">
@@ -323,150 +465,183 @@
       </div>
     </div>
     <script>
+function drawChart(dataArray) {
+  
+  
         
-     
+        var x = dataArray.index;
+        
+        var moisture1 = [];
+        dataArray.attributes.forEach((element) => {
+          if (element.attrName == "soilMoistureRawDepth1") {
+            element.values.forEach((valor) => {
+              if (valor != null){
+              moisture1.push(valor);
+              }else{
+                moisture1.push(0);
+              }
+            });
+          }
+        });
+        var moisture2 = [];
+        dataArray.attributes.forEach((element) => {
+          if (element.attrName == "soilMoistureRawDepth2") {
+            element.values.forEach((valor) => {
+              
+              moisture2.push(valor);
+            });
+          }
+        });
+        var moisture3 = [];
+        dataArray.attributes.forEach((element) => {
+          if (element.attrName == "soilMoistureRawDepth3") {
+            element.values.forEach((valor) => {
+              
+              moisture3.push(valor);
+            });
+          }
+        });
+        var battery = [];
+        dataArray.attributes.forEach((element) => {
+          if (element.attrName == "battery") {
+            element.values.forEach((valor) => {
+            
+              battery.push(valor);
+            });
+          }
+        });
+       
 
+        var temperature1 = [];
+        dataArray.attributes.forEach((element) => {
+          if (element.attrName == "soilTemperatureDepth1") {
+            element.values.forEach((valor) => {
+              temperature1.push(valor);
+            });
+          }
+        });
+        
+        var optionsMoisture = {
+          title: {
+            text: "Moisture",
+            align: "left",
+          },
+          dataLabels: {
+            enabled: true,
+          },
+          chart: {
+            type: "line",
+            height: 350,
+          },
+          series: [
+            {
+              name: "soilMoistureRawDepth1",
+              data: moisture1,
+            },{
+              name: "soilMoistureRawDepth2",
+              data: moisture2
+            },{
+              name: "soilMoistureRawDepth3",
+              data: moisture3
+            }
+          ],
+          xaxis: {
+            type: "datetime",
+            categories: x,
+          },
+        };
+        var divmoisture = dataArray.entityId+"moisture";
+        var divtemperature = dataArray.entityId+"temp";
+        var divbattery = dataArray.entityId+"battery";
+        var chart = new ApexCharts(
+         
+          document.getElementById(divmoisture),
+          optionsMoisture
+        );
+        chart.render();
+
+        var optionsBattery = {
+          title: {
+            text: "Battery",
+            align: "left",
+          },
+          dataLabels: {
+            enabled: true,
+          },
+          chart: {
+            type: "line",
+            height: 350,
+          },
+          series: [
+            {
+              name: "Battery",
+              data: battery,
+            }
+          ],
+          xaxis: {
+            type: "datetime",
+            categories: x,
+          },
+        };
+        var chart = new ApexCharts(
+         
+         document.getElementById(divbattery),
+         optionsBattery
+       );
+       chart.render();
+        //here
+
+
+        var optionsTemp = {
+          title: {
+            text: "Temperature",
+            align: "left",
+          },
+          dataLabels: {
+            enabled: true,
+          },
+          chart: {
+            type: "line",
+            height: 350,
+          },
+          series: [
+            {
+              name: "Temperature1",
+              data: temperature1,
+            }
+          ],
+          xaxis: {
+            type: "datetime",
+            categories: x,
+          },
+        };
+        var chart = new ApexCharts(
+          document.getElementById(divtemperature),
+          optionsTemp
+        );
+        chart.render();
+    
+      }
 
   
-      function getDate(){
-      getOrionData(dateRange);
-      showLoading();
-      
-      }
-      
-                </script>
-             
-      <script>
-      document.getElementById(pilotTitle);
-            console.log(pilotTitle.innerHTML);
-         var arr;
-         
+  
         
-      window.onload = function () {
-            //Mask.setOnlyNumbers(Selector.$('tempo'));
-            dateRange=null;
-                 getOrionData(dateRange);
-        }
-        const getTimeSeries = async (myArr) => {
-              var entities = new Array();
-              var elements = myArr.length;
-              for (i = 0; i < myArr.length; i++) {
-                var temp = await timeSeries(myArr[i].id);
-                entities.push(temp);
-              }
-      
-              return entities;
-            };
-        const timeSeries = async (id) => {
-            
-      if(dateRange != null ){
-        alertar("info", "This will take a while, depending on how much data we have");
-        var body = '{"stmt":"SELECT iotimestamp,soilmoisturecalibrateddepth1,soilmoisturecalibrateddepth2,soilmoisturecalibrateddepth3 FROM mtbatch.etsoilprobecalibrated where entity_id=';
-               body += "'"+id+"' ";
-               body += 'and iotimestamp > '+ dateRange.init + ' and iotimestamp < '+dateRange.final;
-               body +=  ' order by iotimestamp DESC LIMIT 10000;" }';
-      }else{
-        
-        var body = '{"stmt":"SELECT iotimestamp,soilmoisturecalibrateddepth1,soilmoisturecalibrateddepth2,soilmoisturecalibrateddepth3 FROM mtbatch.etsoilprobecalibrated where entity_id=';
-               body += "'"+id+"' ";
-               body +=  'order by iotimestamp DESC LIMIT 30;" }';
+
+      function hideLoading() {
+        var id = document.getElementById("loader-wrapper");
+        id.style.display = "none";
       }
-             
-          
-              var url =
-                "https://cors-anywhere.herokuapp.com/http://177.104.61.17:4200/_sql";
-          
-              var opcoes = {
-                method: "POST",
-      
-                headers: {
-                  "fiware-service": "openiot",
-                  "fiware-servicepath": "/",
-                },
-                body: body
-              };
-              try {
-                const response = await fetch(url, opcoes);
-                const json = response.json();
-                
-                return json;
-              } catch (error) {
-                return error;
-                console.log(error);
-              }
-            };
-        function getOrionData(dateRange) {
-          
-      var req2 = new XMLHttpRequest();
-            
-            
-            var url = 'http://177.104.61.17:1026/v2/entities?type=SoilProbeCalibrated';
-            
-          
-            req2.open("GET", url, true);
-            
-            req2.setRequestHeader("fiware-service", "batch");
-            req2.setRequestHeader("fiware-servicepath", "/");
-            
-            req2.onreadystatechange = async function(){
-                if (this.readyState ==4 && this.status ==200){
-                    var myArr = JSON.parse(this.responseText);
-                    
-                  
-                   numberOfElements=myArr.length;
-                   
-                   for(i=0;i < numberOfElements; i++)  {
-                 
-                  if(myArr[i].error != undefined){
-                    //errorGetEntity(myArr[i].error);
-                    console.log("Erro"+i);
-                    console.log(myArr[i].error);
-                     alertar ("error", myArr[i].error);
-      
-      
-                  }else{
-                    
-                    let time = await timeSeries(myArr[i].id,dateRange);
-               
-                    var exist = document.getElementById(myArr[i].id);
-                    if( exist == null){
-                      createChartDiv(myArr[i].id,1);
-                    }
-                    
-                    if(time.rowcount > 0){
-                      if(i == numberOfElements-1){
-                        drawChart(time,myArr[i].id,"done");  
-                      }else{
-                        drawChart(time,myArr[i].id,"yet");
-                      }
-                      
-                      showChartDiv(myArr[i].id,1);
-                    }else{
-                      
-                      hideChartDiv(myArr[i].id,1);
-                    }
-                   
-                   
-                  }
-                   }
-                   
-                }else{
-                  
-                }
-            }
-            req2.send();
-            
-           
+      function showLoading() {
+        var id = document.getElementById("loader-wrapper");
+        id.style.display = "block";
       }
-      
-      
       function alertar(tipo,mensagem){
       if (tipo == "info"){
         var alert = document.getElementById("alert");
                     var body = '<div class="alert alert-info alert-dismissible fade show" role="alert">';
                     body += "<strong>Info: </strong>"+mensagem;
                     body += ' <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-                  alert.innerHTML = body;
+                  alert.appendChild = body;
       
       }
       if (tipo == "error"){
@@ -477,129 +652,26 @@
                   alert.innerHTML = body;
       }
       
-      }
-      function errorGetEntity(error){
-       alert(error);
-      
-      }
-      
-      function createChartDiv(entityId){
-      
-      var block_to_insert ;
-      var container_block ;
-      
-      block_to_insert = document.createElement( 'div' );
-      block_to_insert.innerHTML = '<div id="'+entityId+'" ><div class="card-header">Probe: '+entityId+'</div><div class="card-body"><div id="'+entityId+'moisture" class="chart-div"></div></div></div></br></br>' ;
-      //block_to_insert.innerHTML='<div class="card"><div class="card-header"><a class="card-link" data-toggle="collapse" href="#collapseOne'+entityId+'">Insert</a></div><div id="collapseOne'+entityId+'" class="collapse show"><div class="card-body">Inserted</div></div></div>';
-      container_block = document.getElementById( 'accordion' );
-      container_block.appendChild( block_to_insert );
-      
-      }
-      
-      function hideChartDiv(entityId){
-        var divToHide = document.getElementById( entityId );
-        divToHide.style.display = "none";
-      
-      }
-      function showChartDiv(entityId){
-        var divToHide = document.getElementById( entityId );
-        divToHide.style.display = "block";
-      
-      }
-      
-            </script>
-    <script>
+
 
       
-async function  drawChart(dataArray,id,done) {
- 
-  var x = dataArray.index;
-        
-        var moisture1=[];
-        var moisture2=[];
-        var moisture3=[];
-        dataArray.rows.forEach((element) => {
-          
-          if(element[0] != null){
-            var index = parseInt(element[0])
-          var data = { x: index, y: Math.round(element[1]*100)};
-          moisture1.push(data);
-                    var data2 = { x: index, y: Math.round(element[2]*100)};
-          moisture2.push(data2);
-                    var data3 = { x: index, y: Math.round(element[3]*100)};
-          moisture3.push(data3);
-          
-          }
-        });
-        
-  
-        var optionsMoisture = {
-        
-          title: {
-            text: "Moisture Calibrated",
-            align: "left",
-          },
-          dataLabels: {
-            enabled: true,
-          },
-          chart: {
-            id: id,
-            type: "line",
-            height: 350,
-          },
-          series: [
-            {
-              name: "soilMoistureCalibratedDepth1",
-              data: moisture1,
-            },{
-              name: "soilMoistureCalibratedDepth1",
-              data: moisture2
-            },{
-              name: "soilMoistureCalibratedDepth1",
-              data: moisture3
+
+      }
+      function getAddresses(){
+      var pilot=document.getElementById("pilotTitle").innerHTML;
+            console.log(pilotTitle.innerHTML);
+            var APIAddress;
+            var OrionAddress;
+
+            if(pilot=="MATOPIBA Pilot"){
+              OrionAddress = "177.104.61.52:1026";
+              APIAddress = "177.104.61.16:2019";
+            }if(pilot=="Guaspari Pilot"){
+              APIAddress = "177.104.61.17:1026"
+              OrionAddress = "177.104.61.48:2019";
             }
-          ],
-          xaxis: {
-            type: "datetime",
-            
-          },
-        };
-        var divmoisture = id+"moisture";
-        
-        var chart = new ApexCharts(
-         
-          document.getElementById(divmoisture),
-          optionsMoisture
-        );
-        
-       
-      
-    
-       
-       chart.render();
-       console.log(done);
-       hideLoading(); 
-       if (done=="done"){
-        hideLoading(); 
-  }
-        
-                 
-      }
-      function wait(ms){
-   var start = new Date().getTime();
-   var end = start;
-   while(end < start + ms) {
-     end = new Date().getTime();
-  }
-}
-
-      function hideLoading() {
-        var id = document.getElementById("loader-wrapper");
-        id.style.display = "none";
-      }
-      function showLoading() {
-        var id = document.getElementById("loader-wrapper");
-        id.style.display = "block";
+            var addresses = { orion: OrionAddress, api: APIAddress};
+            return addresses;
       }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

@@ -41,7 +41,7 @@ module.exports.pilotsec = function (application, req, res) {
 };
 
 module.exports.probesMatopiba = function (application, req, res, pilots) {
-  res.render("pilots-probes-matopiba");
+  res.render("rawData", { pilot: "MATOPIBA", dataRangeTeste: {} });
 };
 
 module.exports.pilotsecm = function (application, req, res) {
@@ -64,10 +64,10 @@ module.exports.table = function (application, req, res) {
   res.render("table");
 };
 module.exports.pilotsCalibratedMatopiba = function (application, req, res) {
-  res.render("calibratedmatopiba");
+  res.render("calibrated", { pilot: "MATOPIBA", dataRangeTeste: {} });
 };
 module.exports.pilotsCalibratedGuaspari = function (application, req, res) {
-  res.render("calibratedguaspari");
+  res.render("calibrated", { pilot: "Guaspari", dataRangeTeste: {} });
 };
 module.exports.pilotsGraphGuaspari = function (application, req, res) {
   res.render("graph_guaspari");

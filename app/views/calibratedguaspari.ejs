@@ -60,7 +60,11 @@
                 "startDate": moment().startOf('hour'),
     "endDate": moment().startOf('hour').add(0, 'hour')
         }, function(start, end, label) {
-            dateRange="fromDate="+start.format("YYYY-MM-DD")+"T"+start.format("HH:mm:SS")+"&toDate="+end.format("YYYY-MM-DD")+"T"+end.format("HH:mm:SS");
+          console.log("START");
+          console.log(start._d.getTime());
+          console.log("END");
+          console.log(end._d.getTime());
+            dateRange={ init:start._d.getTime()/1000, final: end._d.getTime()/1000 }
        
          getOrionData(dateRange);
         });
@@ -68,10 +72,19 @@
     </script>
 
 <style>
+  .loader-wrapper {
+        width: 100%;
+        position: absolute;
+        height: 100%;
+        z-index: 12;
+        background-color: black;
+        opacity: 30%;
+      }
 .card-header {
   border-top: 10px;
 
 }
+
 </style>
     <script>
         
@@ -81,6 +94,7 @@
   
 function getDate(){
 getOrionData(dateRange);
+showLoading();
 
 }
           </script>
@@ -91,42 +105,109 @@ window.onload = function () {
       dateRange=null;
            getOrionData(dateRange);
   }
+  const getTimeSeries = async (myArr) => {
+        var entities = new Array();
+        var elements = myArr.length;
+        for (i = 0; i < myArr.length; i++) {
+          var temp = await timeSeries(myArr[i].id);
+          entities.push(temp);
+        }
 
-  function getOrionData() {
+        return entities;
+      };
+  const timeSeries = async (id) => {
+      
+if(dateRange != null ){
+  alertar("info", "This will take a while, depending on how much data we have");
+  var body = '{"stmt":"SELECT iotimestamp,soilmoisturecalibrateddepth1,soilmoisturecalibrateddepth2,soilmoisturecalibrateddepth3 FROM mtbatch.etsoilprobecalibrated where entity_id=';
+         body += "'"+id+"' ";
+         body += 'and iotimestamp > '+ dateRange.init + ' and iotimestamp < '+dateRange.final;
+         body +=  ' order by iotimestamp DESC LIMIT 10000;" }';
+}else{
+  
+  var body = '{"stmt":"SELECT iotimestamp,soilmoisturecalibrateddepth1,soilmoisturecalibrateddepth2,soilmoisturecalibrateddepth3 FROM mtbatch.etsoilprobecalibrated where entity_id=';
+         body += "'"+id+"' ";
+         body +=  'order by iotimestamp DESC LIMIT 30;" }';
+}
+       
+    
+        var url =
+          "https://cors-anywhere.herokuapp.com/http://177.104.61.17:4200/_sql";
+    
+        var opcoes = {
+          method: "POST",
 
+          headers: {
+            "fiware-service": "openiot",
+            "fiware-servicepath": "/",
+          },
+          body: body
+        };
+        try {
+          const response = await fetch(url, opcoes);
+          const json = response.json();
+          
+          return json;
+        } catch (error) {
+          return error;
+          console.log(error);
+        }
+      };
+  function getOrionData(dateRange) {
+    
 var req2 = new XMLHttpRequest();
       
-      if(dateRange== null){
-      var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.48:2019/v0/SoilProbeCalibrated?&lastN=80';
-      }else{
-        var url = 'https://cors-anywhere.herokuapp.com/http://177.104.61.48:2019/v0/SoilProbeCalibrated?&'+dateRange;
       
-      }
-
+      var url = 'http://177.104.61.17:1026/v2/entities?type=SoilProbeCalibrated';
       
+    
       req2.open("GET", url, true);
       
       req2.setRequestHeader("fiware-service", "batch");
       req2.setRequestHeader("fiware-servicepath", "/");
       
-      req2.onreadystatechange = function(){
+      req2.onreadystatechange = async function(){
           if (this.readyState ==4 && this.status ==200){
               var myArr = JSON.parse(this.responseText);
               
-             console.log(myArr);
+            
              numberOfElements=myArr.length;
              
              for(i=0;i < numberOfElements; i++)  {
+           
             if(myArr[i].error != undefined){
               //errorGetEntity(myArr[i].error);
               console.log("Erro"+i);
               console.log(myArr[i].error);
+               alertar ("error", myArr[i].error);
+
+
             }else{
-              createChartDiv(myArr[i].entityId,1);
               
-              drawChart(myArr[i],i);
+              let time = await timeSeries(myArr[i].id,dateRange);
+         
+              var exist = document.getElementById(myArr[i].id);
+              if( exist == null){
+                createChartDiv(myArr[i].id,1);
+              }
+              
+              if(time.rowcount > 0){
+                if(i == numberOfElements-1){
+                  drawChart(time,myArr[i].id,"done");  
+                }else{
+                  drawChart(time,myArr[i].id,"yet");
+                }
+                
+                showChartDiv(myArr[i].id,1);
+              }else{
+                
+                hideChartDiv(myArr[i].id,1);
+              }
+             
+             
             }
              }
+             
           }else{
             
           }
@@ -136,6 +217,25 @@ var req2 = new XMLHttpRequest();
      
 }
 
+
+function alertar(tipo,mensagem){
+if (tipo == "info"){
+  var alert = document.getElementById("alert");
+              var body = '<div class="alert alert-info alert-dismissible fade show" role="alert">';
+              body += "<strong>Info: </strong>"+mensagem;
+              body += ' <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+            alert.innerHTML = body;
+
+}
+if (tipo == "error"){
+  var alert = document.getElementById("alert");
+              var body = '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+              body += "<strong>Error: </strong>"+mensagem;
+              body += ' <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+            alert.innerHTML = body;
+}
+
+}
 function errorGetEntity(error){
  alert(error);
 
@@ -147,14 +247,23 @@ var block_to_insert ;
 var container_block ;
 
 block_to_insert = document.createElement( 'div' );
-block_to_insert.innerHTML = '<div id="'+entityId+'" ><div class="card-header">Probe: '+entityId+'</div><div class="card-body"><div id="'+entityId+'moisture" class="chart-div"></div><br><div id="'+entityId+'temp" class="chart-div"></div><div id="'+entityId+'battery" class="chart-div"></div></div></div></br></br>' ;
+block_to_insert.innerHTML = '<div id="'+entityId+'" ><div class="card-header">Probe: '+entityId+'</div><div class="card-body"><div id="'+entityId+'moisture" class="chart-div"></div></div></div></br></br>' ;
 //block_to_insert.innerHTML='<div class="card"><div class="card-header"><a class="card-link" data-toggle="collapse" href="#collapseOne'+entityId+'">Insert</a></div><div id="collapseOne'+entityId+'" class="collapse show"><div class="card-body">Inserted</div></div></div>';
 container_block = document.getElementById( 'accordion' );
 container_block.appendChild( block_to_insert );
 
 }
 
+function hideChartDiv(entityId){
+  var divToHide = document.getElementById( entityId );
+  divToHide.style.display = "none";
 
+}
+function showChartDiv(entityId){
+  var divToHide = document.getElementById( entityId );
+  divToHide.style.display = "block";
+
+}
 
       </script>
   </head>
@@ -300,6 +409,9 @@ container_block.appendChild( block_to_insert );
             <!-- Content Row -->
             <div class="row">
               <div class="col-lg-12">
+                <div id="loader-wrapper" class="loader-wrapper">
+                  <div id="loader" class="loader"></div>
+                </div>
                 <!-- Overflow Hidden -->
                 <div class="card mb-12">
                   <div class="card-header py-3">
@@ -309,10 +421,14 @@ container_block.appendChild( block_to_insert );
                   </div>
                   
                   <div class="card-body">
+                    
                     The last 30 samples are showed by default.<br>
                     Select the Date Interval
-                    <input class="form-control" type="text" name="datetimes" disabled />
-                    The date Selection is temporally disable
+                    <div id="alert" class="alert"></div>
+                    
+
+                    <input class="form-control" type="text" name="datetimes"  />
+                    
                     <div id="accordion" class="card">
                      </div>
                     
@@ -386,46 +502,30 @@ container_block.appendChild( block_to_insert );
       </div>
     </div>
     <script>
-function drawChart(dataArray) {
-  
-  
+async function  drawChart(dataArray,id,done) {
+ 
+  var x = dataArray.index;
         
-        var x = dataArray.index;
-        console.log("Array");
-        console.log(dataArray);
-        var moisture1 = [];
-        dataArray.attributes.forEach((element) => {
-          if (element.attrName == "soilMoistureCalibratedDepth1") {
-            element.values.forEach((valor) => {
-              if (valor != null){
-              moisture1.push(valor);
-              }else{
-                moisture1.push(0);
-              }
-            });
+        var moisture1=[];
+        var moisture2=[];
+        var moisture3=[];
+        dataArray.rows.forEach((element) => {
+          
+          if(element[0] != null){
+            var index = parseInt(element[0])
+          var data = { x: index, y: Math.round(element[1]*100)};
+          moisture1.push(data);
+                    var data2 = { x: index, y: Math.round(element[2]*100)};
+          moisture2.push(data2);
+                    var data3 = { x: index, y: Math.round(element[3]*100)};
+          moisture3.push(data3);
+          
           }
         });
-        var moisture2 = [];
-        dataArray.attributes.forEach((element) => {
-          if (element.attrName == "soilMoistureCalibratedDepth2") {
-            element.values.forEach((valor) => {
-              
-              moisture2.push(valor);
-            });
-          }
-        });
-        var moisture3 = [];
-        dataArray.attributes.forEach((element) => {
-          if (element.attrName == "soilMoistureCalibratedDepth3") {
-            element.values.forEach((valor) => {
-              
-              moisture3.push(valor);
-            });
-          }
-        });
-       
         
+  
         var optionsMoisture = {
+        
           title: {
             text: "Moisture Calibrated",
             align: "left",
@@ -434,6 +534,7 @@ function drawChart(dataArray) {
             enabled: true,
           },
           chart: {
+            id: id,
             type: "line",
             height: 350,
           },
@@ -451,21 +552,46 @@ function drawChart(dataArray) {
           ],
           xaxis: {
             type: "datetime",
-            categories: x,
+            
           },
         };
-        var divmoisture = dataArray.entityId+"moisture";
+        var divmoisture = id+"moisture";
         
         var chart = new ApexCharts(
          
           document.getElementById(divmoisture),
           optionsMoisture
         );
-        chart.render();
-
-           
+        
+       
+      
+    
+       
+       chart.render();
+       console.log(done);
+       hideLoading(); 
+       if (done=="done"){
+        hideLoading(); 
+  }
+        
+                 
       }
+      function wait(ms){
+   var start = new Date().getTime();
+   var end = start;
+   while(end < start + ms) {
+     end = new Date().getTime();
+  }
+}
 
+      function hideLoading() {
+        var id = document.getElementById("loader-wrapper");
+        id.style.display = "none";
+      }
+      function showLoading() {
+        var id = document.getElementById("loader-wrapper");
+        id.style.display = "block";
+      }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <!-- Bootstrap core JavaScript-->
