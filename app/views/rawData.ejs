@@ -148,12 +148,13 @@ var req2 = new XMLHttpRequest();
               
             
                  var series = await getTimeSeriesFromAPI(myArr,APIAddress,start,end);
-                  console.log("Start em getRaw");
-              console.log(start);
+
+  
               series.forEach((element)=>{
-console.log("Element");
-console.log(element);
+                console.log(element.entityId);
+               // createProbeButtons(element.entityId);
 if (element.index.length >0){
+  
   createChartDiv(element.entityId);
   drawChart(element);
   
@@ -178,9 +179,9 @@ const getTimeSeriesFromAPI = async (myArr,APIAddress,start,end) => {
           var temp = await timeSeriesAPI(myArr[i].id,APIAddress,start,end);
           console.log("TEMP");
           if(temp.error != null){
-            console.log("É nulo");
+           
           }else{
-            console.log("não é nulo");
+           
           entities.push(temp);
           }
         }
@@ -190,14 +191,14 @@ const getTimeSeriesFromAPI = async (myArr,APIAddress,start,end) => {
 
 const timeSeriesAPI = async (id,APIAddress,start,end) => {
   var url ;
-  console.log("start em getTimeSeries"+start)
+  
           if(start == null ){
            url = "https://cors-anywhere.herokuapp.com/http://"+APIAddress+"/v0/SoilProbe/"+id+"?lastN=30";
              }
              else{
-              url = "https://cors-anywhere.herokuapp.com/http://"+APIAddress+"/v0/SoilProbe/"+id+"?&fromDate"+start+"&toDate="+end;
+              url = "https://cors-anywhere.herokuapp.com/http://"+APIAddress+"/v0/SoilProbe/"+id+"?&fromDate="+start+"&toDate="+end;
              }
-                console.log(url)    ;
+                
                       var opcoes = {
                       method: "GET",
             
@@ -224,7 +225,7 @@ var block_to_insert ;
 var container_block ;
 
 block_to_insert = document.createElement( 'div' );
-block_to_insert.innerHTML = '<div id="'+entityId+'" ><div class="card-header">Probe: '+entityId+'</div><div class="card-body"><div id="'+entityId+'moisture" class="chart-div"></div><br><div id="'+entityId+'temp" class="chart-div"></div><div id="'+entityId+'battery" class="chart-div"></div></div></div></br></br>' ;
+block_to_insert.innerHTML = '<div id="'+entityId+'" ><div class="card-header">Probe: '+entityId+'</div><div class="card-body"><div id="'+entityId+'moisture" class="chart-div"></div><div class="row"><div id="'+entityId+'temp" class="col-md-6"></div><div id="'+entityId+'battery" class="col-md-6 "></div></div></div></div></br></br>' ;
 //block_to_insert.innerHTML='<div class="card"><div class="card-header"><a class="card-link" data-toggle="collapse" href="#collapseOne'+entityId+'">Insert</a></div><div id="collapseOne'+entityId+'" class="collapse show"><div class="card-body">Inserted</div></div></div>';
 container_block = document.getElementById( 'accordion' );
 container_block.appendChild( block_to_insert );
@@ -232,6 +233,18 @@ container_block.appendChild( block_to_insert );
 }
 
 
+function createProbeButtons(entityId){
+
+var block_to_insert ;
+var container_block ;
+
+block_to_insert = document.createElement( 'div' );
+block_to_insert.innerHTML = '<button type="button" class="btn btn-info">'+entityId+'</button>' ;
+
+container_block = document.getElementById( 'individual_probes' );
+container_block.appendChild( block_to_insert );
+
+}
 
       </script>
   </head>
@@ -391,7 +404,7 @@ container_block.appendChild( block_to_insert );
                     Select the Date Interval
                     <div id="alert" class="alert"></div>
                     <input class="form-control" type="text" name="datetimes"  />
-                    
+                    <div id="individual_probes" ></div>
                     <div id="accordion" class="card">
                      </div>
                     

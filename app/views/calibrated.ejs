@@ -350,10 +350,13 @@
       var pilot=document.getElementById("pilotTitle").innerHTML;
             console.log(pilotTitle.innerHTML);
             var pilotAddress;
+            var weatherEntity;
             if(pilot=="MATOPIBA Pilot"){
-              pilotAddress = "177.104.61.52"
+              pilotAddress = "177.104.61.52";
+              weatherEntity = "urn:ngsi-ld:WeatherCurrent:matopiba:ClimaTempoWeather";
             }if(pilot=="Guaspari Pilot"){
-              pilotAddress = "177.104.61.17"
+              pilotAddress = "177.104.61.17";
+              weatherEntity = "urn:ngsi-ld:WeatherCurrent:guaspari:ClimaTempoWeather";
             }
          var arr;
          
@@ -361,7 +364,7 @@
       window.onload = function () {
         var url = window.location.href; 
         hideChartDiv("clearButtonDiv");
-            console.log("Params")   ;
+            
             const urlParams = new URLSearchParams(url);
            
             var start = urlParams.get('init');
@@ -412,6 +415,38 @@
                 console.log(error);
               }
             };
+
+
+            const timeSeriesWeather = async (id,start,end) => {
+            var url;
+            if(start != null ){
+              url = "https://cors-anywhere.herokuapp.com/http://iotee.swamp-project.org:8668/v2/entities/"+weatherEntity+"/attrs/relativehumidity?fromDate="+start+"&toDate="+end;
+              
+            }else{
+              url ="https://cors-anywhere.herokuapp.com/http://iotee.swamp-project.org:8668/v2/entities/urn:ngsi-ld:WeatherCurrent:matopiba:ClimaTempoWeather/attrs/relativehumidity?lastN=30"
+            }
+                   
+                
+                    
+                    var opcoes = {
+                      method: "GET",
+            
+                      headers: {
+                        "fiware-service": "openiot",
+                        "fiware-servicepath": "/weather",
+                      },
+                      
+                    };
+                    try {
+                      const response = await fetch(url, opcoes);
+                      const json = response.json();
+                      
+                      return json;
+                    } catch (error) {
+                      return error;
+                      console.log(error);
+                    }
+                  };
         function getOrionData(start,end) {
           
       var req2 = new XMLHttpRequest();
@@ -432,8 +467,9 @@
                   
                    numberOfElements=myArr.length;
                    var counter=0;
+            
                    for(i=0;i < numberOfElements; i++)  {
-                 
+                 elementID=myArr[i].id;
                   if(myArr[i].error != undefined){
                     //errorGetEntity(myArr[i].error);
                     console.log("Erro"+i);
@@ -443,27 +479,27 @@
       
                   }else{
                     
-                    let time = await timeSeries(myArr[i].id,start,end);
+                    let time = await timeSeries(elementID,start,end);
+                    console.log("ID")
+                    console.log(elementID);
                    
-                    var exist = document.getElementById(myArr[i].id);
+
+                    createChartDiv(elementID);
                    
-                    if( exist == null){
-                      createChartDiv(myArr[i].id,1);
-                    }
                     
                     if(time.rowcount > 0){
                       
                       if(i == numberOfElements-1){
-                        drawChart(time,myArr[i].id,"done");  
+                        drawChart(time,elementID,"done");  
                       }else{
                         
-                        drawChart(time,myArr[i].id,"yet");
+                        drawChart(time,elementID,"yet");
                       }
-                    
-                      showChartDiv(myArr[i].id,1);
+                   
+                         showChartDiv(elementID,1);
                     }else{
                       counter++;
-                      hideChartDiv(myArr[i].id,1);
+                      hideChartDiv(elementID,1);
                     }
                    
                       if(counter==numberOfElements){
@@ -483,76 +519,6 @@
            
       }
       
-      function getWeatherData(start,end) {
-          
-          var req2 = new XMLHttpRequest();
-                
-                
-                var url = 'http://http://iotee.swamp-project.org/:1026/v2/entities?type=SoilProbeCalibrated';
-                
-              
-                req2.open("GET", url, true);
-                
-                req2.setRequestHeader("fiware-service", "batch");
-                req2.setRequestHeader("fiware-servicepath", "/");
-                
-                req2.onreadystatechange = async function(){
-                    if (this.readyState ==4 && this.status ==200){
-                        var myArr = JSON.parse(this.responseText);
-                        
-                      
-                       numberOfElements=myArr.length;
-                       var counter=0;
-                       for(i=0;i < numberOfElements; i++)  {
-                     
-                      if(myArr[i].error != undefined){
-                        //errorGetEntity(myArr[i].error);
-                        console.log("Erro"+i);
-                        console.log(myArr[i].error);
-                         alertar ("error", myArr[i].error);
-          
-          
-                      }else{
-                        
-                        let time = await timeSeries(myArr[i].id,start,end);
-                       
-                        var exist = document.getElementById(myArr[i].id);
-                       
-                        if( exist == null){
-                          createChartDiv(myArr[i].id,1);
-                        }
-                        
-                        if(time.rowcount > 0){
-                          
-                          if(i == numberOfElements-1){
-                            drawChart(time,myArr[i].id,"done");  
-                          }else{
-                            
-                            drawChart(time,myArr[i].id,"yet");
-                          }
-                        
-                          showChartDiv(myArr[i].id,1);
-                        }else{
-                          counter++;
-                          hideChartDiv(myArr[i].id,1);
-                        }
-                       
-                          if(counter==numberOfElements){
-                            alertar("error","There is not data available in the selected period");
-                            hideLoading(); 
-                          }
-                       
-                      }
-                       }
-                       
-                    }else{
-                      
-                    }
-                }
-                req2.send();
-                
-               
-          }
            
       function alertar(tipo,mensagem){
       if (tipo == "info"){
@@ -604,14 +570,47 @@
             </script>
     <script>
 
-      
+      function formatTimestampToQLData(timestamp){
+        var dateStart = new Date(timestamp);
+        startYear = dateStart.getFullYear()
+          startMonth = parseInt(dateStart.getMonth())+1;
+          if(startMonth<10){
+            startMonth="0"+startMonth;
+          }
+          startDay = dateStart.getDate();
+          if(startDay<10){
+            startDay="0"+startDay;
+          }
+       
+        startHour = dateStart.getHours();
+        if(startHour<10){
+            startHour="0"+startHour;
+          }
+          startMin = dateStart.getMinutes();
+          if(startMin<10){
+            startMin="0"+startMin;
+          }
+          startSec = dateStart.getSeconds();
+          if(startSec<10){
+            startSec="0"+startSec;
+          }
+          var formatterDate = startYear+"-"+startMonth+"-"+startDay+"T"+startHour+":"+startMin+":"+startSec;
+
+        
+        
+        return formatterDate;
+        //2020-06-18T15:00:00
+      }
 async function  drawChart(dataArray,id,done) {
  
   var x = dataArray.index;
-        
+        var humidity=[];
         var moisture1=[];
         var moisture2=[];
         var moisture3=[];
+      
+      
+
         dataArray.rows.forEach((element) => {
           
           if(element[0] != null){
@@ -625,8 +624,27 @@ async function  drawChart(dataArray,id,done) {
           
           }
         });
-        
-  
+          var dateStart = formatTimestampToQLData(moisture1[0].x);
+          var dateEnd = formatTimestampToQLData(moisture1[moisture1.length-1].x);
+       
+
+          
+          let weather = await timeSeriesWeather(id,dateEnd,dateStart);
+         console.log(id);
+
+         if(weather.error == "Not Found"){
+         console.log("Não encontrei registros");
+         humidity.push({x:dateEnd,y:0})
+         }else{
+           console.log(weather.index.length );
+           
+          for(i=0; i < weather.index.length -1 ;i++){
+            console.log(i)
+           var tempHum = { x: weather.index[i], y: weather.values[i] };
+           
+            humidity.push(tempHum);
+          }
+         }
         var optionsMoisture = {
         
           title: {
@@ -651,11 +669,14 @@ async function  drawChart(dataArray,id,done) {
             },{
               name: "soilMoistureCalibratedDepth1",
               data: moisture3
-            }
+            },{
+              name: "Relative Humidity From ClimaTempo",
+              data: humidity
+            },
           ]
           ,
   noData: {
-    text: 'Loading...'
+    text: 'No Data Available...'
   },
           xaxis: {
             type: "datetime",
